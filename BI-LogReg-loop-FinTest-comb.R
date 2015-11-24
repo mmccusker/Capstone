@@ -1,0 +1,403 @@
+setwd("~/Data Analytics/Capstone course/Boehringer-Ingelheim/Step_1_all_classifiers")
+getwd()
+library("knitr")
+library("RSQLite")
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_60')
+library("rJava")
+library("RWeka")
+library("RWekajars")
+library("SnowballC")
+library("ROCR") # visualize performance of classifiers
+library("caret") # for confusion matrix
+library("e1071") # may be needed for caret
+
+##################################################
+#### Looping LogReg for CV (original features)
+folds <- createFolds(WD$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- WD[-f,] 
+      test <- WD[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (original features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = WD)
+predictGLM = predict(model, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+##################################################
+#### Looping LogReg for CV (50 features)
+folds <- createFolds(top50wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- top50wd[-f,] 
+      test <- top50wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (50 features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = top50wd)
+predictGLM = predict(model, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+##############################################
+#### Looping LogReg for CV (100 features)
+folds <- createFolds(top100wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- top100wd[-f,] 
+      test <- top100wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                   data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (100 features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = top100wd)
+predictGLM = predict(model, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+############################################################
+#### Looping LogReg for CV (150 features)
+folds <- createFolds(top150wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- top150wd[-f,] 
+      test <- top150wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (150 features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = top150wd)
+predictGLM = predict(model, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+
+##################################################################
+#### Looping LogReg for CV (200 features)
+folds <- createFolds(top200wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- top200wd[-f,] 
+      test <- top200wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (200 features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = top200wd)
+predictGLM = predict(model, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+##############################################################
+#### Looping LogReg for CV (250 features)
+folds <- createFolds(top250wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- top250wd[-f,] 
+      test <- top250wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (250 features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = top250wd)
+predictGLM = predict(model, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+##############################################################
+#### Looping LogReg for CV (aic from top 500 (rf) features)
+folds <- createFolds(top500wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- top500wd[-f,] 
+      test <- top500wd[f,]
+      model1 <-glm(formula = Activity ~ D27 + D146 + D129 + D60 + D806 + D480 + 
+                     D1150 + D117 + D66 + D961 + D999 + D149 + D900 + D881 + D599 + 
+                     D954 + D51 + D1309 + D13 + D1016 + D1049 + D459 + D42 + D1361 + 
+                     D14 + D1009 + D81 + D1012 + D100 + D504 + D612 + D949 + D1071 + 
+                     D44 + D194 + D688 + D5 + D92 + D131 + D202 + D1008 + D994 + 
+                     D1031 + D958 + D661 + D204 + D998 + D87 + D41 + D54 + D609 + 
+                     D6 + D212 + D697 + D1076 + D972 + D132 + D1018 + D583 + D207 + 
+                     D1119 + D45 + D224 + D1003 + D1094 + D1087 + D3 + D686 + 
+                     D1078 + D1198 + D1026 + D1014 + D1017 + D1158 + D1174 + D596 + 
+                     D976 + D1067 + D103 + D89 + D649 + D791 + D983 + D1058 + 
+                     D107 + D1002 + D750 + D441 + D78 + D813 + D210 + D810 + D155 + 
+                     D470 + D1047 + D1033 + D1059 + D1164 + D162 + D997 + D95 + 
+                     D119 + D314 + D492 + D807 + D63 + D143 + D1100 + D1160 + 
+                     D1203 + D29 + D911 + D973 + D226 + D71 + D86 + D159 + D1023 + 
+                     D35 + D449 + D505 + D38 + D742 + D118 + D2 + D88 + D175 + 
+                     D1029 + D1006 + D1192 + D219 + D98 + D808 + D514 + D1143, 
+                   family = binomial, data = train)
+      predictGLM = predict(model1, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (aic from top 500 (rf) features)
+model1 <-glm(formula = Activity ~ D27 + D146 + D129 + D60 + D806 + D480 + 
+               D1150 + D117 + D66 + D961 + D999 + D149 + D900 + D881 + D599 + 
+               D954 + D51 + D1309 + D13 + D1016 + D1049 + D459 + D42 + D1361 + 
+               D14 + D1009 + D81 + D1012 + D100 + D504 + D612 + D949 + D1071 + 
+               D44 + D194 + D688 + D5 + D92 + D131 + D202 + D1008 + D994 + 
+               D1031 + D958 + D661 + D204 + D998 + D87 + D41 + D54 + D609 + 
+               D6 + D212 + D697 + D1076 + D972 + D132 + D1018 + D583 + D207 + 
+               D1119 + D45 + D224 + D1003 + D1094 + D1087 + D3 + D686 + 
+               D1078 + D1198 + D1026 + D1014 + D1017 + D1158 + D1174 + D596 + 
+               D976 + D1067 + D103 + D89 + D649 + D791 + D983 + D1058 + 
+               D107 + D1002 + D750 + D441 + D78 + D813 + D210 + D810 + D155 + 
+               D470 + D1047 + D1033 + D1059 + D1164 + D162 + D997 + D95 + 
+               D119 + D314 + D492 + D807 + D63 + D143 + D1100 + D1160 + 
+               D1203 + D29 + D911 + D973 + D226 + D71 + D86 + D159 + D1023 + 
+               D35 + D449 + D505 + D38 + D742 + D118 + D2 + D88 + D175 + 
+               D1029 + D1006 + D1192 + D219 + D98 + D808 + D514 + D1143, 
+             family = binomial, data = top500wd)
+predictGLM = predict(model1, newdata=finTest, type="response")
+t <- table(finTest$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+
+##############################################################
+#### Looping LogReg for CV (100 comb mca/pca features)
+folds <- createFolds(Top100comb.wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- Top100comb.wd[-f,] 
+      test <- Top100comb.wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (100 comb mca/ppca features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = Top100comb.wd)
+predictGLM = predict(model, newdata=Top100comb.ftd, type="response")
+t <- table(Top100comb.ftd$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+##############################################################
+#### Looping LogReg for CV (200 comb mca/ppca features)
+folds <- createFolds(Top200comb.wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- Top200comb.wd[-f,] 
+      test <- Top200comb.wd[f,]
+      model<-glm(formula = Activity ~ ., family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (200 comb mca/ppca features)
+model<-glm(formula = Activity ~ ., family = "binomial", 
+           data = Top200comb.wd)
+predictGLM = predict(model, newdata=Top200comb.ftd, type="response")
+t <- table(Top200comb.ftd$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+##############################################################
+#### Looping LogReg for CV (AIC taken from top 500 comb mca/PCAs)
+folds <- createFolds(Top500comb.wd$Activity, k=10)
+set.seed(67)
+f<-function(x){
+  res.vec <- vector()
+  count <- 1
+  while(count < 11){ 
+    for (f in folds){
+      train <- Top500comb.wd[-f,] 
+      test <- Top500comb.wd[f,]
+      model<-glm(formula = Activity ~ PC3 + PC7 + PC6 + PC50 + PC19 + PC26 + 
+                   PC10 + PC47 + PC15 + PC46 + PC25 + Dim.44 + PC62 + PC21 + 
+                   PC28 + PC55 + Dim.106 + Dim.169 + Dim.18 + PC13 + PC86 + 
+                   PC30 + PC227 + Dim.39 + PC108 + PC104 + PC128 + PC90 + PC45 + 
+                   PC66 + Dim.71 + PC40 + PC223 + PC8 + Dim.116 + Dim.378 + 
+                   PC247 + PC167 + PC215 + PC243 + PC336 + Dim.172 + PC17 + 
+                   PC150 + Dim.285 + PC48 + PC68 + Dim.104 + PC181 + Dim.87 + 
+                   PC107 + Dim.99 + PC162 + PC172 + PC397 + PC184 + Dim.201 + 
+                   Dim.131 + PC92 + PC85 + Dim.32 + Dim.65 + Dim.168 + PC65 + 
+                   Dim.110 + Dim.124 + PC154 + PC135 + PC134 + Dim.7 + Dim.14 + 
+                   Dim.79 + Dim.29 + Dim.381 + Dim.4 + Dim.1 + PC365 + PC396 + 
+                   PC142 + Dim.21 + Dim.101 + PC367 + Dim.132 + Dim.154 + PC37 + 
+                   PC166 + PC250 + PC138 + PC157 + PC190 + PC300 + PC177 + Dim.67 + 
+                   Dim.113 + Dim.266 + Dim.37 + Dim.6 + PC71 + Dim.333 + PC33 + 
+                   Dim.98 + Dim.171 + PC241 + Dim.25 + PC94 + Dim.344 + Dim.133 + 
+                   PC254 + Dim.137 + PC194 + PC305 + Dim.252 + Dim.196 + PC4 + 
+                   PC328 + Dim.192 + Dim.212 + PC341 + PC179 + Dim.274 + Dim.111 + 
+                   Dim.30 + PC203 + Dim.184 + PC271 + PC231 + PC321 + Dim.386 + 
+                   Dim.66 + PC79 + PC211 + PC36 + PC20 + Dim.15 + PC64 + Dim.144 + 
+                   Dim.78 + PC316 + Dim.223 + PC237 + Dim.181 + Dim.239 + Dim.74 + 
+                   Dim.261 + PC63 + Dim.267 + Dim.235 + Dim.189 + PC111 + Dim.62 + 
+                   Dim.269 + Dim.11 + PC24 + Dim.16 + Dim.176 + PC315 + PC382 + 
+                   PC326 + PC276 + PC43 + PC102 + PC214 + PC60 + PC58 + Dim.167 + 
+                   PC311 + Dim.204 + Dim.49 + PC49 + PC375 + PC112 + Dim.141 + 
+                   Dim.55 + PC262 + Dim.312, family = "binomial", 
+                 data = train)
+      predictGLM = predict(model, newdata=test, type="response")
+      t <- table(test$Activity, predictGLM > 0.5)
+      res.vec[count]<-(t[1,1]+t[2,2])/(sum(t))
+      count<-count+1
+    }
+    result<-mean(res.vec)
+    return(result)
+  }
+}
+f(c(1:10))
+# predict on validation data (AIC taken from top 500 comb mca/PCAs)
+model<-glm(formula = Activity ~ PC3 + PC7 + PC6 + PC50 + PC19 + PC26 + 
+             PC10 + PC47 + PC15 + PC46 + PC25 + Dim.44 + PC62 + PC21 + 
+             PC28 + PC55 + Dim.106 + Dim.169 + Dim.18 + PC13 + PC86 + 
+             PC30 + PC227 + Dim.39 + PC108 + PC104 + PC128 + PC90 + PC45 + 
+             PC66 + Dim.71 + PC40 + PC223 + PC8 + Dim.116 + Dim.378 + 
+             PC247 + PC167 + PC215 + PC243 + PC336 + Dim.172 + PC17 + 
+             PC150 + Dim.285 + PC48 + PC68 + Dim.104 + PC181 + Dim.87 + 
+             PC107 + Dim.99 + PC162 + PC172 + PC397 + PC184 + Dim.201 + 
+             Dim.131 + PC92 + PC85 + Dim.32 + Dim.65 + Dim.168 + PC65 + 
+             Dim.110 + Dim.124 + PC154 + PC135 + PC134 + Dim.7 + Dim.14 + 
+             Dim.79 + Dim.29 + Dim.381 + Dim.4 + Dim.1 + PC365 + PC396 + 
+             PC142 + Dim.21 + Dim.101 + PC367 + Dim.132 + Dim.154 + PC37 + 
+             PC166 + PC250 + PC138 + PC157 + PC190 + PC300 + PC177 + Dim.67 + 
+             Dim.113 + Dim.266 + Dim.37 + Dim.6 + PC71 + Dim.333 + PC33 + 
+             Dim.98 + Dim.171 + PC241 + Dim.25 + PC94 + Dim.344 + Dim.133 + 
+             PC254 + Dim.137 + PC194 + PC305 + Dim.252 + Dim.196 + PC4 + 
+             PC328 + Dim.192 + Dim.212 + PC341 + PC179 + Dim.274 + Dim.111 + 
+             Dim.30 + PC203 + Dim.184 + PC271 + PC231 + PC321 + Dim.386 + 
+             Dim.66 + PC79 + PC211 + PC36 + PC20 + Dim.15 + PC64 + Dim.144 + 
+             Dim.78 + PC316 + Dim.223 + PC237 + Dim.181 + Dim.239 + Dim.74 + 
+             Dim.261 + PC63 + Dim.267 + Dim.235 + Dim.189 + PC111 + Dim.62 + 
+             Dim.269 + Dim.11 + PC24 + Dim.16 + Dim.176 + PC315 + PC382 + 
+             PC326 + PC276 + PC43 + PC102 + PC214 + PC60 + PC58 + Dim.167 + 
+             PC311 + Dim.204 + Dim.49 + PC49 + PC375 + PC112 + Dim.141 + 
+             Dim.55 + PC262 + Dim.312, family = "binomial", 
+           data = Top500comb.wd)
+predictGLM = predict(model, newdata=Top500comb.ftd, type="response")
+t <- table(Top500comb.ftd$Activity, predictGLM > 0.5)
+(t[1,1]+t[2,2])/(sum(t))
+
+
+
